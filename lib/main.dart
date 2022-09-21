@@ -6,10 +6,10 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-ThemeData themesData({
+ThemeData themeDataLight({
   Color? seedColor,
 }) {
-  final theme = ThemeData();
+  final theme = ThemeData.light();
   final colorScheme = ColorScheme.fromSeed(seedColor: seedColor ?? Colors.blue);
 
   return theme.copyWith(
@@ -19,8 +19,18 @@ ThemeData themesData({
   );
 }
 
-final themeDataProvider = StateProvider.family<ThemeData, Color?>(
-    (ref, seedColor) => themesData(seedColor: seedColor));
+ThemeData themeDataDark({
+  Color? seedColor,
+}) {
+  final theme = ThemeData.dark();
+  final colorScheme = ColorScheme.fromSeed(seedColor: seedColor ?? Colors.blue);
+
+  return theme.copyWith(
+    colorScheme: colorScheme,
+    indicatorColor: colorScheme.primary,
+    useMaterial3: true,
+  );
+}
 
 class ThemeNotifier extends ChangeNotifier {
   ThemeMode themeMode = ThemeMode.system;
@@ -55,14 +65,12 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeNotifier = ref.watch(themeNotifierProvider);
 
-    final themeData = ref.watch(themeDataProvider(Colors.green));
-
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: themeNotifier.themeMode,
       // Define your themes here
-      theme: themeData,
-      darkTheme: ThemeData.dark(),
+      theme: themeDataLight(seedColor: Colors.black),
+      darkTheme: themeDataDark(seedColor: Colors.deepOrangeAccent),
       home: const HomePage(),
     );
   }
