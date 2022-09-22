@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -49,7 +48,8 @@ class ThemeNotifier extends ChangeNotifier {
   }
 
   Future<int> getTheme(String key) async {
-    return int.parse(await flutterSecureStorage?.read(key: key) ?? themeMode.index.toString());
+    return int.parse(await flutterSecureStorage?.read(key: key) ??
+        themeMode.index.toString());
   }
 
   Future<void> setTheme(ThemeMode mode) async {
