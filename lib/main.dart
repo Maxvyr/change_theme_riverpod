@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -37,25 +37,24 @@ class ThemeNotifier extends ChangeNotifier {
     _init();
   }
   ThemeMode themeMode = ThemeMode.system;
-  FlutterSecureStorage? flutterSecureStorage;
+  late SharedPreferences prefs;
   final key = "theme";
 
   Future<void> _init() async {
-    flutterSecureStorage = const FlutterSecureStorage();
+    prefs = await SharedPreferences.getInstance();
     final theme = await getTheme(key);
     themeMode = ThemeMode.values[theme];
     notifyListeners();
   }
 
   Future<int> getTheme(String key) async {
-    return int.parse(await flutterSecureStorage?.read(key: key) ??
-        themeMode.index.toString());
+    return int.parse(prefs.getString(key) ?? themeMode.index.toString());
   }
 
   Future<void> setTheme(ThemeMode mode) async {
     themeMode = mode;
     notifyListeners();
-    await flutterSecureStorage?.write(key: key, value: mode.index.toString());
+    await prefs.setString(key, mode.index.toString());
   }
 }
 
